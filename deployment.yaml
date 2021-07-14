@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: default
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: workdir
+          mountPath: /usr/share/nginx/html
+      initContainers:
+      - name: init-container
+        image: google/cloud-sdk
+        command: ['bash', '-c', 'gsutil cp gs://simanau-config-bucket/index.html /work-dir/index.html']
+        volumeMounts:
+        - name: workdir
+          mountPath: "/work-dir"
+      serviceAccountName: "simanau-gke"
+      volumes:
+      - name: workdir
+        emptyDir: {}

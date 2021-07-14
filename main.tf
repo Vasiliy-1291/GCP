@@ -8,5 +8,5 @@ terraform {
 }
 
 provider "google" {
-  project = "gcp-lab-1-vsimanau"
+  project = "gcp-lab-1-vsimanau-319621"
 }
