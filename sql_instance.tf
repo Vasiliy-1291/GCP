@@ -1,12 +1,21 @@
 resource "google_compute_network" "private_network" {
-#  provider = google-beta
   name = "private-network"
   auto_create_subnetworks = false
 }
 
-resource "google_compute_global_address" "private_ip_address" {
-#  provider = google-beta
+resource "google_compute_firewall" "my-firewall" {
+  name    = "my-firewall"
+  network = google_compute_network.private_network.name
+  description = "firewall for privat tetwork ingress"
+  direction = "INGRESS"
 
+  allow {
+    protocol = "tcp"
+    ports = ["22", "80", "3306"]
+  }
+}
+
+resource "google_compute_global_address" "private_ip_address" {
   name          = "private-ip-address"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
@@ -15,7 +24,6 @@ resource "google_compute_global_address" "private_ip_address" {
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
-#  provider = google-beta
 
   network                 = google_compute_network.private_network.id
   service                 = "servicenetworking.googleapis.com"
@@ -27,8 +35,6 @@ resource "random_id" "db_name_suffix" {
 }
 
 resource "google_sql_database_instance" "master" {
-#  provider = google-beta
-
   name   = "private-instance-${random_id.db_name_suffix.hex}"
   region = "us-central1"
   database_version = "MYSQL_8_0"
@@ -67,12 +73,6 @@ resource "google_sql_user" "castom-user" {
   instance = google_sql_database_instance.master.name
   password = random_password.password.result
 }
-
-output "db_password" {
-  sensitive = true
-  value     = "dbname_custom: ${random_password.password.result}"
-}
-
 resource "google_sql_database" "database" {
   name     = "my-database"
   instance = google_sql_database_instance.master.name
@@ -83,8 +83,3 @@ resource "google_service_account" "simanau-sql" {
   display_name = "simanau-sql"
   description = "Service Account for sql"
 }
-
-resource "google_storage_bucket_iam_member" "member-simanau-storage" {
-  bucket = google_storage_bucket.simanau-config-bucket.name
-  role = "roles/storage.objectCreator"
-  member = "serviceAccount:simanau-storage@gcp-lab-1-vsimanau-319621.iam.gserviceaccount.com"
