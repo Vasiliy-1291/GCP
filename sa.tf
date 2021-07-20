@@ -1,5 +1,5 @@
-resource "google_storage_bucket" "simanau-config-bucket" {
-  name          = "simanau-config-bucket"
+resource "google_storage_bucket" "simanau-config-bucket-35" {
+  name          = "simanau-config-bucket-35"
   force_destroy = true
   storage_class = "STANDARD"
   location      = "US"
@@ -12,9 +12,9 @@ resource "google_service_account" "simanau-storage" {
 }
 
 resource "google_storage_bucket_iam_member" "member-simanau-storage" {
-  bucket = google_storage_bucket.simanau-config-bucket.name
+  bucket = google_storage_bucket.simanau-config-bucket-35.name
   role = "roles/storage.objectCreator"
-  member = "serviceAccount:simanau-storage@gcp-lab-1-vsimanau-319621.iam.gserviceaccount.com"
+  member = "serviceAccount:simanau-storage@${var.project}.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_custom_role" "my-custom-role" {
@@ -33,6 +33,6 @@ resource "google_service_account" "simanau-gke" {
 }
 
 resource "google_project_iam_member" "custom-account-iam" {
-  role = "projects/gcp-lab-1-vsimanau-319621/roles/MyCustomRole"
-  member = "serviceAccount:simanau-gke@gcp-lab-1-vsimanau-319621.iam.gserviceaccount.com"
+  role = "projects/${var.project}/roles/MyCustomRole"
+  member = "serviceAccount:simanau-gke@${var.project}.iam.gserviceaccount.com"
 }

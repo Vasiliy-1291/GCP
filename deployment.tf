@@ -23,7 +23,7 @@ resource "kubernetes_deployment" "nginx-deployment" {
         init_container {
           image = "google/cloud-sdk"
           name  = "init-gcloud"
-          command = ["bash", "-c", "gsutil cp gs://sharayau-config-bucket/index.html /workdir/index.html"]
+          command = ["bash", "-c", "gsutil cp gs://simanau-config-bucket-35/index.html /workdir/index.html"]
           volume_mount {
             name = "workdir"
             mount_path = "/workdir"

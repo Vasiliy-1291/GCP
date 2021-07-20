@@ -17,9 +17,9 @@ resource "google_container_cluster" "simanau-cluster" {
   location = var.zone
   remove_default_node_pool = true
   initial_node_count       = 1
-  workload_identity_config {
-    identity_namespace = "nginxnamespace.svc.id.goog"
-  }
+#  workload_identity_config {
+#    identity_namespace = "nginxnamespace.svc.id.goog"
+#  }
 }
 
 resource "google_container_node_pool" "nginx-simanau-pool" {
@@ -36,10 +36,10 @@ resource "google_container_node_pool" "nginx-simanau-pool" {
 module "my-app-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   cluster_name = google_container_cluster.simanau-cluster.name
-  name       = "simanauidentity"
+  name       = "svsworkload"
   namespace  = kubernetes_namespace.nginxnamespace.metadata.0.name
   project_id = var.project
-  roles = ["projects/gcp-lab-1-vsimanau-319621/roles/my-custom-role"]
+  roles = ["projects/${var.project}/roles/my-custom-role"]
 }
 
 
