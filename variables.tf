@@ -1,6 +1,6 @@
 variable "project" {
   type = string
-  default = "gcp-lab-vsimanau"
+  default = "gcp-lab-2-vsimanau"
 }
 
 variable "region" {
@@ -10,5 +10,5 @@ variable "region" {
 
 variable "zone" {
   type = string
-  default = "us-central1-a"
+  default = "us-central1-c"
 }

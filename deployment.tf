@@ -1,13 +1,13 @@
 resource "kubernetes_deployment" "nginx-deployment" {
   metadata {
     name = "nginx-deployment"
-	namespace = kubernetes_namespace.nginxnamespace.metadata.0.name
+	    namespace = kubernetes_namespace.nginxnamespace.metadata.0.name
     labels = {
       app = "nginx"
     }
   }
   spec {
-    replicas = 1
+    replicas = 3
     selector {
       match_labels = {
         app = "nginx"
@@ -23,7 +23,7 @@ resource "kubernetes_deployment" "nginx-deployment" {
         init_container {
           image = "google/cloud-sdk"
           name  = "init-gcloud"
-          command = ["bash", "-c", "gsutil cp gs://simanau-config-bucket-35/index.html /workdir/index.html"]
+          command = ["bash", "-c", "gsutil cp gs://simanau-config-bucket-task-6/index.html /workdir/index.html"]
           volume_mount {
             name = "workdir"
             mount_path = "/workdir"
@@ -54,7 +54,7 @@ resource "kubernetes_deployment" "nginx-deployment" {
 resource "kubernetes_service" "nginx-service" {
   metadata {
     name = "nginx-service"
-	namespace = kubernetes_namespace.nginxnamespace.metadata.0.name
+	    namespace = kubernetes_namespace.nginxnamespace.metadata.0.name
   }
   spec {
     selector = {
@@ -71,7 +71,7 @@ resource "kubernetes_service" "nginx-service" {
 resource "kubernetes_ingress" "nginx-ingress" {
   metadata {
     name = "nginx-ingress"
-	namespace = kubernetes_namespace.nginxnamespace.metadata.0.name
+	    namespace = kubernetes_namespace.nginxnamespace.metadata.0.name
   }
   spec {
     rule {

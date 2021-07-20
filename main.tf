@@ -1,25 +1,12 @@
-data "google_client_config" "provider" {}
-
-provider "google" {
-  project = var.project
-  region  = var.region
-  zone    = var.zone
-}
-
-provider "kubernetes" {
-  host = "https://${google_container_cluster.simanau-cluster.endpoint}"
-  token = data.google_client_config.provider.access_token
-  cluster_ca_certificate = base64decode(google_container_cluster.simanau-cluster.master_auth[0].cluster_ca_certificate)
-}
 
 resource "google_container_cluster" "simanau-cluster" {
   name     = "simanau-cluster"
   location = var.zone
   remove_default_node_pool = true
   initial_node_count       = 1
-#  workload_identity_config {
-#    identity_namespace = "nginxnamespace.svc.id.goog"
-#  }
+  workload_identity_config {
+    identity_namespace      = "gcp-lab-2-vsimanau.svc.id.goog"
+  }
 }
 
 resource "google_container_node_pool" "nginx-simanau-pool" {
@@ -39,7 +26,7 @@ module "my-app-workload-identity" {
   name       = "svsworkload"
   namespace  = kubernetes_namespace.nginxnamespace.metadata.0.name
   project_id = var.project
-  roles = ["projects/${var.project}/roles/my-custom-role"]
+  roles = ["projects/gcp-lab-2-vsimanau/roles/mycustomrole"]
 }
 
 
